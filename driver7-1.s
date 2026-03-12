@@ -103,13 +103,13 @@ _start:
 	// -----------------------------------------------------------------
 	// PROCESS INPUT TO SEE IF WE APPEND OR NOT
 	//	X0: number of characters we read
-	//	X1: azApp, string of intput we got to see if we append
+	//	X1: szApp, string of intput we got to see if we append
 	//	X2: counter, keeps track of what index we are on
 	//	X3: file permissions
 	//	X4: current character
 	// -----------------------------------------------------------------
 	// INITALIZE
-	LDR X1, =azApp		// append string input
+	LDR X1, =szApp		// append string input
 	MOV X2, #0 			// counter = 0
 	MOV X3, T_RW 		// file permission, default no / truncate
 
