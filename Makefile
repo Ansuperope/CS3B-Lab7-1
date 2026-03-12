@@ -12,7 +12,7 @@
 # Authors: Kaveh Zare, modified and documented by Matthew Reese
 # Last Modified: 2/12/2025
 
-MAIN := main
+MAIN := driver7-1
 EXE := $(MAIN).out  # Executable name
 #      ^^^^^^--- Change this to the name of the lab executable / library archive
 
