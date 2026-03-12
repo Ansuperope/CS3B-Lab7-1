@@ -106,14 +106,13 @@ _start:
 
 	// -----------------------------------------------------------------
 	// CLOSE FILE - CFILE ( fileName )
-	//	sEOut	 - error message to output
-	//	iELen	 - error message length
 	//	fileName - file name to output
-	//	cont	 - where to jump to
 	// -----------------------------------------------------------------
 	.MACRO	CFILE fileName
-			LDR X0, =\fileName
-			LDR X0, [fileName]
+			LDR X1, =\fileName
+
+			LDR X0, X1
+			LDR X0, [X1]
 			MOV X8, SYS_close
 			SVC 0
 	.ENDM
@@ -182,7 +181,7 @@ noApp:
 	//					  ERR  ( sEOut, iELen, fileName, cont )
 	// -----------------------------------------------------------------
 	OPEN szFileOut, X3, RW_RW_RW_
-	ERR  sEOut, EM_LEN, cont
+	ERR  sEOut, EM_LEN, end
 
 	// CLOSE CFILE fileName
 	CFILE szFileOut
