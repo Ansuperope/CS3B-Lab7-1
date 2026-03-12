@@ -1,0 +1,14 @@
+# in the terminal run:
+# docker compose run arm64-dev
+services:
+  arm64-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    container_name: arm64-dev
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true

@@ -1,0 +1,48 @@
+name: ARM64 Assembly CI
+
+# When to run CI
+# Runs everytime you make a push or pull from main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Tells CI what steps to do for every run
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout your repo
+      - uses: actions/checkout@v3
+
+      # 2. Set up QEMU for ARM64 emulation (so we can build ARM64 Docker image on x86)
+      - uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
+
+      # 3. Set up Docker Buildx
+      - uses: docker/setup-buildx-action@v2
+
+      # 4. Build your ARM64 Docker image
+      - name: Build ARM64 container
+        run: |
+          docker build --platform=linux/arm64 -t arm64-dev .
+      
+      # 5. Run the container and use Makefile to build
+      - name: Build using Makefile
+        run: |
+          docker run --rm --platform=linux/arm64 \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            arm64-dev \
+            make
+
+      # 6. Run program and check output
+      - name: Run program
+        run: |
+          docker run --rm --platform=linux/arm64 \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            arm64-dev \
+            make run
