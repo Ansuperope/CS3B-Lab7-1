@@ -100,8 +100,37 @@ _start:
 	// -----------------------------------------------------------------
 	INPUT szApp, sMApp
 
+	// -----------------------------------------------------------------
 	// PROCESS INPUT TO SEE IF WE APPEND OR NOT
+	//	X0: number of characters we read
+	//	X1: azApp, string of intput we got to see if we append
+	//	X2: counter, keeps track of what index we are on
+	//	X3: file permissions
+	//	X4: current character
+	// -----------------------------------------------------------------
+	// INITALIZE
+	LDR X1, =azApp		// append string input
+	MOV X2, #0 			// counter = 0
+	MOV X3, T___RW 		// file permission, default no / truncate
 
+	// CHECK IF USER INPUT Y
+whileProApp:	// while (counter < length && W4 != Y)
+	CMP  X2, X0			// counter >= stringLength, exit
+	B.GE noApp
+
+	STRB W4, [X1, X2]	// W4 = X1[X2], currentChar = string[counter]
+	CMP  W4, #'Y'		// W4 == 'Y'
+	B.EQ yesApp
+
+	ADD X2, X2, #1		// counter++
+	B whileProApp
+
+	// USER ENTER Y - APPEND
+yesApp:
+	MOV X3, A_C_RW 		// set file permission to yes / append
+
+	// EXIT PROGRAM - USER DID NOT ENTER Y - NO APPEND
+noApp:
 	// -----------------------------------------------------------------
 	// TERMINATE PROGRAM
 	// -----------------------------------------------------------------
