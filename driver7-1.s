@@ -44,64 +44,61 @@ _start:
 	.EQU B_LEN,			16		// buffer (read file) length 
 
 	// -----------------------------------------------------------------
-	// GET USER INPUT - INPUT (pMess, saveReg)
-	//	pMess		- prompt message
-	//	saveReg		- where to store file name 
+	// GET USER INPUT - INPUT (szBuff, sPMess)
+	//	szBuff	- buffer where input will be saved at
+	//	sPMess	- prompt message
 	// -----------------------------------------------------------------
-	.MACRO 	INPUT pMess, saveReg
-			MOV X0, =szFileName	// buffer to save fileName to
+	.MACRO 	INPUT szBuff, sPMess
+			LDR X0, =\szBuff	// buffer to save fileName to
 			MOV	X1, IN_LEN		// length of file name
-			MOV X2,	\pMess		// prompt message
+			LDR X2,	=\pMess		// prompt message
 			MOV X3, PM_LEN		// prompt message length 
 			BL  getstring		// call function getstring
 
 			// IF INPUT NOT VALID TERMINATE
 			CMP  X0, XZR		// if X0 < 0, termiate program
 			B.LT end
-
-			// IF VALID SAVE
-			MOV \saveReg,	X0	// saveReg = X0, save file name
 	.ENDM
 
 	// -----------------------------------------------------------------
 	// READ FILE:
 	// -----------------------------------------------------------------
-	.MACRO
+	; .MACRO
 
-	.ENDM
+	; .ENDM
 
 	// -----------------------------------------------------------------
 	// READ FILE
 	// -----------------------------------------------------------------
-	.MACRO
+	; .MACRO
 
-	.ENDM
+	; .ENDM
     
 	.text  // code section
 	
 	// -----------------------------------------------------------------
 	// GET FIRST INPUT FILE NAME
-	//	MACRO: INPUT (pMess, saveReg)
+	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT =sMFirst, X4
+	INPUT szFileName1, sMFirst
 
 	// -----------------------------------------------------------------
 	// GET SECOND INPUT FILE NAME
-	//	MACRO: INPUT (pMess, saveReg)
+	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT =sMFirst, X5
+	INPUT szFileName2, sMSec
 
 	// -----------------------------------------------------------------
 	// GET OUTPUT FILE NAME
-	//	MACRO: INPUT (pMess, saveReg)
+	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT =sMFirst, X6
+	INPUT szFileOut, sMOut
 
 	// -----------------------------------------------------------------
 	// GET IF WE APPEND OR NOT
-	//	MACRO: INPUT (pMess, saveReg)
+	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT =sMFirst, X7
+	INPUT szApp, sMApp
 
 	// PROCESS INPUT TO SEE IF WE APPEND OR NOT
 
@@ -115,17 +112,20 @@ end:
 
 	.data	// data section
 // PROMPT MESSAGES
-sMFirst	.ascii "Enter first input file name :"
-sMSec 	.ascii "Enter second input file name:"
-sMOut 	.ascii "Enter output file name      :"
-sMApp 	.ascii "Append to the output? [Y/N] :"
+sMFirst:	.ascii "Enter first input file name :"
+sMSec: 		.ascii "Enter second input file name:"
+sMOut: 		.ascii "Enter output file name      :"
+sMApp: 		.ascii "Append to the output? [Y/N] :"
 
 // ERROR MESSAGES
-sEIN	.ascii "Fatal error: failed to open input file"
-sEOut	.ascii "Fatal error: failed to open output file"
+sEIN:		.ascii "Fatal error: failed to open input file"
+sEOut:		.ascii "Fatal error: failed to open output file"
 
 // BUFFERS
-szFileName	.asciz	IN_LEN
-szBuffer	.asciz	B_LEN
+szFileName1: 	.skip	IN_LEN
+szFileName2: 	.skip	IN_LEN
+szFileOut: 		.skip	IN_LEN
+szApp: 			.skip	IN_LEN
+szBuffer:	 	.skip	B_LEN
 
 .end	// end of program, optional but good practice 
