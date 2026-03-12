@@ -51,7 +51,7 @@ _start:
 	.MACRO 	INPUT szBuff, sPMess
 			LDR X0, =\szBuff	// buffer to save fileName to
 			MOV	X1, IN_LEN		// length of file name
-			LDR X2,	=\sPMess		// prompt message
+			LDR X2,	=\sPMess	// prompt message
 			MOV X3, PM_LEN		// prompt message length 
 			BL  getstring		// call function getstring
 
@@ -61,21 +61,65 @@ _start:
 	.ENDM
 
 	// -----------------------------------------------------------------
-	// READ FILE:
+	// OPEN FILE - OPEN ( fileName, fileFlag, filePer )
+	//	fileName	- file to open
+	//	fileFlag	- file flags, what is allowed for files
+	//	filePer		- file permissions for users
 	// -----------------------------------------------------------------
-	// .MACRO
-
-	// .ENDM
+	.MACRO	OPEN fileName, fileFlag, filePer
+			MOV X0, AT_FDCWD	// file name related to directory
+			LDR X1, =\fileName	// file name
+			MOV	X2, \fileFlag	// file flags
+			MOV X3, \filePer	// file permission
+			MOV X8, SYS_openat	// command to execute
+			SVC 0				// call terminal to execute command
+	.ENDM
 
 	// -----------------------------------------------------------------
-	// READ FILE
+	// OUTPUT ERROR - ERR ( sEOut, iELen, fileName, cont )
+	//	sEOut	 - error message to output
+	//	iELen	 - error message length
+	//	fileName - file name to output
+	//	cont	 - where to jump to
 	// -----------------------------------------------------------------
-	// .MACRO
+	.MACRO	ERR sEOut, iELen, fileName, cont
+			CMP  X0, #0			// check if valid
+			B.GE \cont
 
-	// .ENDM
+			// IF ERROR - OUTPUT ERROR MESSAGE			
+			MOV X0, STDOUT		// tells program we will output
+			MOV X1, \sEOut		// string to output
+			MOV X2, \iELen		// number of characters to output
+			MOV X8, SYS_write	// Linux write() sys call
+			SVC 0				// call Linux to execute commands
+
+			// OUTPUT FILE NAME
+			MOV X0, STDOUT		// tells program we will output
+			MOV X1, \fileName	// file name to output
+			MOV X2, IN_LEN		// length of file name
+			MOV X8, SYS_write	// Linux write() sys call
+			SVC 0				// call Linux to execute commands
+
+			// TERMINATE PROGRAM
+			B end
+	.ENDM
+
+	// -----------------------------------------------------------------
+	// CLOSE FILE - CFILE ( fileName )
+	//	sEOut	 - error message to output
+	//	iELen	 - error message length
+	//	fileName - file name to output
+	//	cont	 - where to jump to
+	// -----------------------------------------------------------------
+	.MACRO	CFILE fileName
+			LDR X0, =\fileName
+			LDR X0, [fileName]
+			MOV X8, SYS_close
+			SVC 0
+	.ENDM
     
 	.text  // code section
-	
+
 	// -----------------------------------------------------------------
 	// GET FIRST INPUT FILE NAME
 	//	MACRO: INPUT (szBuff, sPMess)
@@ -129,8 +173,20 @@ whileProApp:	// while (counter < length && W4 != Y)
 yesApp:
 	MOV X3, A_C_RW 		// set file permission to yes / append
 
-	// EXIT PROGRAM - USER DID NOT ENTER Y - NO APPEND
+	// -----------------------------------------------------------------
+	// EXIT LOOP - USER DID NOT ENTER Y - NO APPEND
+	// -----------------------------------------------------------------
 noApp:
+	// -----------------------------------------------------------------
+	// OPEN OUTPUT FILE - OPEN ( fileName, fileFlag, filePer )
+	//					  ERR  ( sEOut, iELen, fileName, cont )
+	// -----------------------------------------------------------------
+	OPEN szFileOut, X3, RW_RW_RW_
+	ERR  sEOut, EM_LEN, cont
+
+	// CLOSE CFILE fileName
+	CFILE szFileOut
+
 	// -----------------------------------------------------------------
 	// TERMINATE PROGRAM
 	// -----------------------------------------------------------------
