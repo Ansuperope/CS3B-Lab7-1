@@ -111,7 +111,7 @@ _start:
 	// INITALIZE
 	LDR X1, =azApp		// append string input
 	MOV X2, #0 			// counter = 0
-	MOV X3, T___RW 		// file permission, default no / truncate
+	MOV X3, T_RW 		// file permission, default no / truncate
 
 	// CHECK IF USER INPUT Y
 whileProApp:	// while (counter < length && W4 != Y)
