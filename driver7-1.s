@@ -51,7 +51,7 @@ _start:
 	.MACRO 	INPUT szBuff, sPMess
 			LDR X0, =\szBuff	// buffer to save fileName to
 			MOV	X1, IN_LEN		// length of file name
-			LDR X2,	=\pMess		// prompt message
+			LDR X2,	=\sPMess		// prompt message
 			MOV X3, PM_LEN		// prompt message length 
 			BL  getstring		// call function getstring
 
@@ -63,16 +63,16 @@ _start:
 	// -----------------------------------------------------------------
 	// READ FILE:
 	// -----------------------------------------------------------------
-	; .MACRO
+	// .MACRO
 
-	; .ENDM
+	// .ENDM
 
 	// -----------------------------------------------------------------
 	// READ FILE
 	// -----------------------------------------------------------------
-	; .MACRO
+	// .MACRO
 
-	; .ENDM
+	// .ENDM
     
 	.text  // code section
 	
