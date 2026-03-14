@@ -67,10 +67,9 @@ gdb:
 save:
 	git add .
 
-# build docker
-build:
-	docker compose up -d --build
+# Docker targets
+docker-build:
+	docker build -t arm64-dev .
 
-# run docker
-docker:
-	docker compose run arm64-dev bash
+docker-run:
+	docker run --rm -v $(PWD):/workspace -w /workspace arm64-dev bash -c "make && make run"
