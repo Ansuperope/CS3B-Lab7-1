@@ -233,32 +233,57 @@ noApp:
 	//	X4: output file descriptor
 	//	X5: input file descriptor
 	// -----------------------------------------------------------------
+	OPEN  szFileName1, _O_RDONLY, R__R__R__		// open file
+	ERR   sEIN, EM_LEN, szFileName1, noErr1		// check if error opening
 
-	OPEN  szFileName1, _O_RDONLY, R__R__R__
-	ERR   sEIN, EM_LEN, szFileName1, end
-	MOV   X5, X0		// save input file descriptor
+noErr1:
+	MOV   X5, X0								// save input file descriptor
 
 getFile1:
-	RFILE X5
+	RFILE X5		// read file
 	
 	CMP	 X0, #0		// check if still content input file need to be read
 	B.LE closeFile1
 
 	MOV X6, X0		// save bytes read
-	WFILE X4, X6
+	WFILE X4, X6	// write to output
 
-	B getFile1
-
+	B getFile1		// loop again
 
 closeFile1:
-	CFILE X5
-	// -----------------------------------------------------------------
-	// INPUT FILE 2 TEXT TO OUTPUT
-	// -----------------------------------------------------------------
-getFile2:
+	CFILE X5		// close file
 
 	// -----------------------------------------------------------------
-	// CLOSE FILES
+	// INPUT FILE 2 TEXT TO OUTPUT
+	//	OPEN ( fileName, fileFlag, filePer )
+	//	ERR  ( sEOut, iELen, fileName, cont )
+	//	RFILE ( fileDes )
+	//	WFILE ( fileDes, fileLen )
+	//	X4: output file descriptor
+	//	X5: input file descriptor
+	// -----------------------------------------------------------------
+	OPEN  szFileName2, _O_RDONLY, R__R__R__		// open file
+	ERR   sEIN, EM_LEN, szFileName2, noErr2		// check if error opening
+	
+noErr2:
+	MOV   X5, X0								// save input file descriptor
+
+getFile2:
+	RFILE X5		// read file
+	
+	CMP	 X0, #0		// check if still content input file need to be read
+	B.LE closeFile2
+
+	MOV X6,   X0	// save bytes read
+	WFILE X4, X6	// write to output
+
+	B getFile2		// loop again
+
+closeFile2:
+	CFILE X5		// close file
+
+	// -----------------------------------------------------------------
+	// CLOSE OUTPUT FILES
 	// -----------------------------------------------------------------
 	CFILE X4
 

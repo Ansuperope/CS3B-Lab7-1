@@ -41,7 +41,7 @@ jobs:
         run: |
           bash -c "
             echo 'Running tests' &&
-            echo -e 'input\nLab7-1inputFile1.txt\nout.txt\ny\n'
+            printf 'input\nLab7-1inputFile1.txt\nout.txt\ny\n'
             make run
           "
 

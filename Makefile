@@ -71,6 +71,5 @@ save:
 docker-build:
 	docker build -t arm64-dev .
 
-docker-run:
-	docker-build
-	docker run --rm -v $(PWD):/workspace -w /workspace arm64-dev bash -c "make && make run"
+docker:
+	docker run --rm -it -v $(PWD):/workspace -w /workspace arm64-dev
