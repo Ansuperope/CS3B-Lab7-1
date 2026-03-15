@@ -7,7 +7,23 @@
 // LOREM
 // ---------------------------------------------------------------------
 // 	PSUEDOCODE:
-// LOREM
+// 1. Prompt user and get the following input from the user:
+//	a. input file 1
+//	b. input file 2
+//	c. output file
+//	d. if we append (y = append | else = overwrite)
+//
+// 2. Check what user input for append
+//	a. if y, append
+//	b. else overwrite (default)
+//
+// 3. Open output file
+//
+// 4. Write input file 1 and input file 2 contents to output
+//
+// 5. Close all files
+//
+// 6. Terminate program
 // ---------------------------------------------------------------------
 .global _start	// Provide program starting address 
 
@@ -161,8 +177,8 @@ whileProApp:	// while (counter < length && W4 != Y)
 	CMP  X2, X0			// counter >= stringLength, exit
 	B.GE noApp
 
-	STRB W4, [X1, X2]	// W4 = X1[X2], currentChar = string[counter]
-	CMP  W4, #'Y'		// W4 == 'Y'
+	LDRB W4, [X1, X2]	// W4 = X1[X2], currentChar = string[counter]
+	CMP  W4, 'Y'		// W4 == 'Y'
 	B.EQ yesApp
 
 	ADD X2, X2, #1		// counter++
@@ -181,9 +197,21 @@ noApp:
 	//					  ERR  ( sEOut, iELen, fileName, cont )
 	// -----------------------------------------------------------------
 	OPEN szFileOut, X3, RW_RW_RW_
-	ERR  sEOut, EM_LEN, end
+	ERR  sEOut, EM_LEN, szFileOut end
 
-	// CLOSE CFILE fileName
+	// -----------------------------------------------------------------
+	// INPUT FILE 1 TEXT TO OUTPUT
+	// -----------------------------------------------------------------
+getFile1:
+
+	// -----------------------------------------------------------------
+	// INPUT FILE 2 TEXT TO OUTPUT
+	// -----------------------------------------------------------------
+getFile2:
+
+	// -----------------------------------------------------------------
+	// CLOSE FILES
+	// -----------------------------------------------------------------
 	CFILE szFileOut
 
 	// -----------------------------------------------------------------
