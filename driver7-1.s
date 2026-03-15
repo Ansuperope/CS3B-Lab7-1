@@ -121,14 +121,36 @@ _start:
 	.ENDM
 
 	// -----------------------------------------------------------------
+	// WRITE FILE - WFILE ( fileDes, fileLen )
+	//	fileDes - file descriptor
+	//	fileLen - file length
+	// -----------------------------------------------------------------
+	.MACRO WFILE fileDes, fileLen
+		MOV X0, \fileDes	// File descriptor
+		LDR X1, =szBuffer	// Buffer to hold data
+		MOV X2, \fileLen	// number of bytes to write
+		MOV X8, SYS_write	// system call write
+		SVC 0
+	.ENDM
+
+	// -----------------------------------------------------------------
+	// READ FILE - RFILE ( fileDes )
+	//	fileDes - file descriptor
+	// -----------------------------------------------------------------
+	.MACRO RFILE fileDes
+		MOV X0, \fileDes		// get file descriptor
+		LDR X1, =szBuffer	// input buffer
+		MOV X2, B_LEN		// input length
+		MOV X8, SYS_read	// system call read
+		SVC 0
+	.ENDM
+
+	// -----------------------------------------------------------------
 	// CLOSE FILE - CFILE ( fileName )
 	//	fileName - file name to output
 	// -----------------------------------------------------------------
 	.MACRO	CFILE fileName
-			LDR X1, =\fileName
-
-			LDR X0, X1
-			LDR X0, [X1]
+			MOV X0, \fileName
 			MOV X8, SYS_close
 			SVC 0
 	.ENDM
@@ -178,7 +200,7 @@ whileProApp:	// while (counter < length && W4 != Y)
 	B.GE noApp
 
 	LDRB W4, [X1, X2]	// W4 = X1[X2], currentChar = string[counter]
-	CMP  W4, 'Y'		// W4 == 'Y'
+	CMP  W4, #'Y'		// W4 == 'Y'
 	B.EQ yesApp
 
 	ADD X2, X2, #1		// counter++
@@ -193,17 +215,43 @@ yesApp:
 	// -----------------------------------------------------------------
 noApp:
 	// -----------------------------------------------------------------
-	// OPEN OUTPUT FILE - OPEN ( fileName, fileFlag, filePer )
-	//					  ERR  ( sEOut, iELen, fileName, cont )
+	// OPEN OUTPUT FILE
+	//	X4: output file descriptor
+	//	OPEN ( fileName, fileFlag, filePer )
+	//	ERR  ( sEOut, iELen, fileName, cont )
 	// -----------------------------------------------------------------
-	OPEN szFileOut, X3, RW_RW_RW_
-	ERR  sEOut, EM_LEN, szFileOut end
+	OPEN szFileOut, X3, RW_RW_RW_		// open output
+	ERR  sEOut, EM_LEN, szFileOut, end	// check if there was an error
+	MOV  X4, X0							// save file descriptor
 
 	// -----------------------------------------------------------------
 	// INPUT FILE 1 TEXT TO OUTPUT
+	//	OPEN ( fileName, fileFlag, filePer )
+	//	ERR  ( sEOut, iELen, fileName, cont )
+	//	RFILE ( fileDes )
+	//	WFILE ( fileDes, fileLen )
+	//	X4: output file descriptor
+	//	X5: input file descriptor
 	// -----------------------------------------------------------------
-getFile1:
 
+	OPEN  szFileName1, _O_RDONLY, R__R__R__
+	ERR   sEIN, EM_LEN, szFileName1, end
+	MOV   X5, X0		// save input file descriptor
+
+getFile1:
+	RFILE X5
+	
+	CMP	 X0, #0		// check if still content input file need to be read
+	B.LE closeFile1
+
+	MOV X6, X0		// save bytes read
+	WFILE X4, X6
+
+	B getFile1
+
+
+closeFile1:
+	CFILE X5
 	// -----------------------------------------------------------------
 	// INPUT FILE 2 TEXT TO OUTPUT
 	// -----------------------------------------------------------------
@@ -212,7 +260,7 @@ getFile2:
 	// -----------------------------------------------------------------
 	// CLOSE FILES
 	// -----------------------------------------------------------------
-	CFILE szFileOut
+	CFILE X4
 
 	// -----------------------------------------------------------------
 	// TERMINATE PROGRAM
