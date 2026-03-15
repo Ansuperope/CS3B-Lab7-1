@@ -34,4 +34,14 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             arm64-dev \
-            bash -c "make && make run"
+            bash -c "make"
+      
+      # test cases
+      - name: Tests
+        run: |
+          bash -c "
+            echo 'Running tests' &&
+            echo -e 'input\nLab7-1inputFile1.txt\nout.txt\ny\n'
+            make run
+          "
+
