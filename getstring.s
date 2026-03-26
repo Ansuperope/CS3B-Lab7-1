@@ -65,6 +65,17 @@ getstring:
 	MOV X8, SYS_read 	// Linux read() system call number 
 	SVC 0				// call Linux to execute commands
 
+	// -----------------------------------------------------------------
+	// IF INPUT NOT VALID TERMINATE
+	// -----------------------------------------------------------------
+	CMP  X0, XZR		// if X0 > 0, termiate program
+	B.GE done
+
+	// TERMINATE PROGRAM
+	MOV X0, #0			// set return code to 0, all good 
+	MOV X8, #SYS_exit	// set exit() supervisor call code 
+	SVC 0				// call Linux to exit 
+
     // terminate program
 done:
 	RET     // return to main

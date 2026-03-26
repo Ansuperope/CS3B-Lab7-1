@@ -159,27 +159,42 @@ _start:
 
 	// -----------------------------------------------------------------
 	// GET FIRST INPUT FILE NAME
-	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT szFileName1, sMFirst
+	LDR X0, =sMFirst		// buffer to save fileName to
+	MOV	X1, IN_LEN			// length of file name
+	LDR X2,	=szFileName1	// prompt message
+	MOV X3, PM_LEN			// prompt message length 
+	BL  getstring			// call function getstring
 
 	// -----------------------------------------------------------------
 	// GET SECOND INPUT FILE NAME
 	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT szFileName2, sMSec
+	LDR X0, =sMSec			// buffer to save fileName to
+	MOV	X1, IN_LEN			// length of file name
+	LDR X2,	=szFileName2	// prompt message
+	MOV X3, PM_LEN			// prompt message length 
+	BL  getstring			// call function getstring
 
 	// -----------------------------------------------------------------
 	// GET OUTPUT FILE NAME
 	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT szFileOut, sMOut
+	LDR X0, =sMOut			// buffer to save fileName to
+	MOV	X1, IN_LEN			// length of file name
+	LDR X2,	=szFileOut		// prompt message
+	MOV X3, PM_LEN			// prompt message length 
+	BL  getstring			// call function getstring
 
 	// -----------------------------------------------------------------
 	// GET IF WE APPEND OR NOT
 	//	MACRO: INPUT (szBuff, sPMess)
 	// -----------------------------------------------------------------
-	INPUT szApp, sMApp
+	LDR X0, =sMApp			// buffer to save fileName to
+	MOV	X1, IN_LEN			// length of file name
+	LDR X2,	=szApp			// prompt message
+	MOV X3, PM_LEN			// prompt message length 
+	BL  getstring			// call function getstring
 
 	// -----------------------------------------------------------------
 	// PROCESS INPUT TO SEE IF WE APPEND OR NOT
